@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VRBench task",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "enum": [
+        "atomic",
+        "composite"
+      ]
+    },
+    "input": {
+      "type": "string",
+      "minLength": 1
+    },
+    "robot": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "grading": {
+      "type": "object",
+      "properties": {
+        "regions": {
+          "type": "string",
+          "minLength": 1
+        },
+        "collision": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "regions",
+        "collision"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "type",
+    "input",
+    "robot",
+    "scene",
+    "reference",
+    "grading"
+  ],
+  "additionalProperties": true
+}

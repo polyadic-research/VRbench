@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VRBench prediction",
+  "type": "object",
+  "properties": {
+    "coordinate_frame": {
+      "const": "world"
+    },
+    "position_unit": {
+      "const": "meter"
+    },
+    "waypoints": {
+      "type": "array",
+      "minItems": 36,
+      "maxItems": 36,
+      "items": {
+        "type": "object",
+        "properties": {
+          "tcp_position": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "tcp_quaternion_xyzw": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "gripper_event": {
+            "enum": [
+              null,
+              "open",
+              "close"
+            ]
+          },
+          "contact_event": {
+            "enum": [
+              null,
+              "engage",
+              "disengage"
+            ]
+          }
+        },
+        "required": [
+          "tcp_position",
+          "tcp_quaternion_xyzw",
+          "gripper_event",
+          "contact_event"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "coordinate_frame",
+    "position_unit",
+    "waypoints"
+  ],
+  "additionalProperties": false
+}

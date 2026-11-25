@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VRBench dataset",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "vrbench"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "task_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "coordinate_frame": {
+      "const": "world"
+    },
+    "position_unit": {
+      "const": "meter"
+    },
+    "robots": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "task_count",
+    "coordinate_frame",
+    "position_unit",
+    "robots"
+  ],
+  "additionalProperties": true
+}

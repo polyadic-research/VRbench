@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VRBench result",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "const": "scored"
+    },
+    "region_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "collision_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "reliability_weight": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "adjusted_collision_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "combined_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "prediction_status": {
+      "enum": [
+        "prediction_valid",
+        "no_answer"
+      ]
+    },
+    "score_basis": {
+      "enum": [
+        "geometric_replay",
+        "no_answer_zero_penalty"
+      ]
+    },
+    "stage_scores": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "weight",
+          "region_stage_score",
+          "contribution"
+        ]
+      }
+    },
+    "composite_parameters": {
+      "type": "object",
+      "required": [
+        "tracking_cutoff",
+        "collision_cutoff",
+        "region_floor_weight"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "status",
+    "region_score",
+    "collision_score",
+    "reliability_weight",
+    "adjusted_collision_score",
+    "combined_score"
+  ],
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "score_basis"
+        ],
+        "properties": {
+          "score_basis": {
+            "const": "stagewise_contact_tracking"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "stage_scores",
+          "composite_parameters"
+        ]
+      }
+    }
+  ]
+}

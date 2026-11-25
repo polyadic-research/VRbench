@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vrbench"
+version = "0.1.0"
+description = "VirtualRoboBench: offline TCP prediction and geometric evaluation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+dependencies = ["numpy>=1.24,<3", "scipy>=1.10,<2", "Pillow>=10", "jsonschema>=4.18", "httpx>=0.27,<1"]
+
+[project.optional-dependencies]
+hub = ["huggingface-hub>=0.25"]
+collision = ["mujoco>=3.2", "python-fcl>=0.7,<0.8"]
+
+[project.scripts]
+vrbench = "vrbench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+vrbench = ["protocol/*.txt", "resources/*.json", "resources/schemas/*.json"]

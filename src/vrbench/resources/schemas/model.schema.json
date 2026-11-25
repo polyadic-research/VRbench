@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VRBench model",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "api_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "api_key_env": {
+      "type": "string",
+      "minLength": 1
+    },
+    "base_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "credentials_file": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transport": {
+      "enum": [
+        "responses",
+        "chat_completions"
+      ]
+    },
+    "reasoning_effort": {
+      "enum": [
+        null,
+        "none",
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultra"
+      ]
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_output_tokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    }
+  },
+  "required": [
+    "name",
+    "transport",
+    "model",
+    "reasoning_effort"
+  ],
+  "additionalProperties": false
+}

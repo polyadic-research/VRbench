@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VRBench observation",
+  "type": "object",
+  "properties": {
+    "task_instruction": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coordinate_frame": {
+      "const": "world"
+    },
+    "position_unit": {
+      "const": "meter"
+    },
+    "initial_tcp": {
+      "type": "object"
+    },
+    "initial_gripper": {
+      "type": "object"
+    },
+    "robot_context": {
+      "type": "object"
+    },
+    "observation_profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cameras": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "image": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "image"
+        ],
+        "additionalProperties": true
+      }
+    }
+  },
+  "required": [
+    "task_instruction",
+    "coordinate_frame",
+    "position_unit",
+    "initial_tcp",
+    "initial_gripper",
+    "robot_context",
+    "observation_profile",
+    "cameras"
+  ],
+  "additionalProperties": true
+}

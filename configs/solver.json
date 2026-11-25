@@ -1,0 +1,54 @@
+{
+  "seed": 421,
+  "reference_step_m": 0.01,
+  "reference_step_rad": 0.05,
+  "max_reference_nodes": 1200,
+  "virtual_time": {
+    "policy": "max_joint_range_over_explicit_velocity",
+    "velocity_by_joint": {
+      "robot0_joint1": 2.175,
+      "robot0_joint2": 2.175,
+      "robot0_joint3": 2.175,
+      "robot0_joint4": 2.175,
+      "robot0_joint5": 2.61,
+      "robot0_joint6": 2.61,
+      "robot0_joint7": 2.61
+    },
+    "source": "Official IKLink anytime ee5a469 configs/urdfs/panda.urdf joint velocity values; identity joint-index mapping for exported Panda arm. Used only for virtual graph time, not physical execution."
+  },
+  "planner": {
+    "time_budget_seconds": 120.0,
+    "max_iterations": 12,
+    "max_ik_calls": 5000,
+    "sparse_step": 8,
+    "initial_candidates_per_anchor": 3,
+    "initial_attempts_per_anchor": 18,
+    "guided_offsets_per_edge": 1,
+    "offset_range_rad": 0.2,
+    "max_candidates_per_layer": 64,
+    "dedup_distance_rad": 0.01,
+    "sparse_supersede_factor": 1.1,
+    "minimum_random_attempts_per_iteration": 8,
+    "max_tracking_searches_per_iteration": 64,
+    "tracking_propagation_nodes": 16,
+    "stop_after_first_valid_path": true,
+    "ik_config": {
+      "ik_max_iterations": 120,
+      "ik_position_tolerance_m": 0.0002,
+      "ik_orientation_tolerance_rad": 0.003,
+      "ik_damping": 0.02,
+      "ik_orientation_weight": 0.25,
+      "ik_posture_weight": 0.00001,
+      "ik_iteration_joint_step": 0.1
+    },
+    "path_position_tolerance_m": 0.002,
+    "path_orientation_tolerance_rad": 0.03
+  },
+  "replay": {
+    "max_joint_step_rad": 0.04,
+    "midpoint_position_tolerance_m": 0.002,
+    "midpoint_rotation_tolerance_rad": 0.03,
+    "max_depth": 12,
+    "max_samples": 12000
+  }
+}

@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: Please cite this software and the original datasets used in your evaluation.
+title: 'VRBench: VirtualRoboBench'
+type: software
+authors:
+  - name: VRBench contributors
+repository-code: https://github.com/polyadic-research/VRbench
+license: MIT

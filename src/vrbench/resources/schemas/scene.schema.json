@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VRBench scene",
+  "type": "object",
+  "properties": {
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "robot_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "registration_body": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "model",
+    "assets",
+    "robot_root",
+    "registration_body"
+  ],
+  "additionalProperties": true
+}

@@ -1,0 +1,428 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VRBench region stage graph",
+  "$ref": "#/$defs/rule",
+  "$defs": {
+    "rule": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "rule": {
+              "const": "stage_graph"
+            },
+            "sampling": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "enum": [
+                    "authored",
+                    "linear"
+                  ]
+                },
+                "step_m": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "additionalProperties": false,
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "type": {
+                        "const": "linear"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": [
+                      "step_m"
+                    ]
+                  }
+                }
+              ]
+            },
+            "stages": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/stage"
+              }
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "kind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "parameters": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "id",
+                  "kind",
+                  "parameters"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "rule",
+            "stages"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "rule": {
+              "enum": [
+                "mean",
+                "best_assignment"
+              ]
+            },
+            "rules": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/rule"
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "rule",
+            "rules"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "stage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "dependencies": {
+          "type": "object",
+          "properties": {
+            "all_of": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "any_of": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "relation": {
+              "enum": [
+                "strictly_after",
+                "not_before",
+                "gate"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "check": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "const": "distance"
+                },
+                "regions": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "distance_scale_m": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "hit_tolerance_m": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "type",
+                "regions",
+                "distance_scale_m"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "const": "authored"
+                },
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "mode": {
+                      "enum": [
+                        "distance",
+                        "event_distance",
+                        "coverage",
+                        "orientation"
+                      ]
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "regions": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "distance_scale_m": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "event": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "enum": [
+                            "gripper_event",
+                            "contact_event"
+                          ]
+                        },
+                        {
+                          "type": "string"
+                        }
+                      ],
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "held": {
+                      "type": "boolean"
+                    },
+                    "engaged": {
+                      "type": "boolean"
+                    },
+                    "last_only": {
+                      "type": "boolean"
+                    },
+                    "release_anchor": {
+                      "type": "object",
+                      "properties": {
+                        "index": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "offset": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "minItems": 3,
+                          "maxItems": 3
+                        }
+                      },
+                      "required": [
+                        "index"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "angle_scale_rad": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "angle_tolerance_rad": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "minimum_points": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "minimum_xy_diagonal_m": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "separation_m": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "tolerance_m": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "tool_offset": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 3,
+                      "maxItems": 3
+                    },
+                    "target_quaternion_xyzw": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 4,
+                      "maxItems": 4
+                    }
+                  },
+                  "required": [
+                    "mode"
+                  ],
+                  "additionalProperties": false,
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "mode": {
+                            "enum": [
+                              "distance",
+                              "event_distance",
+                              "coverage"
+                            ]
+                          }
+                        }
+                      },
+                      "then": {
+                        "required": [
+                          "regions"
+                        ]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "mode": {
+                            "enum": [
+                              "event_distance"
+                            ]
+                          }
+                        }
+                      },
+                      "then": {
+                        "required": [
+                          "event"
+                        ]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "mode": {
+                            "enum": [
+                              "coverage"
+                            ]
+                          }
+                        }
+                      },
+                      "then": {
+                        "required": [
+                          "minimum_points",
+                          "minimum_xy_diagonal_m",
+                          "separation_m",
+                          "tolerance_m"
+                        ]
+                      }
+                    },
+                    {
+                      "if": {
+                        "properties": {
+                          "mode": {
+                            "enum": [
+                              "orientation"
+                            ]
+                          }
+                        }
+                      },
+                      "then": {
+                        "required": [
+                          "angle_scale_rad",
+                          "angle_tolerance_rad",
+                          "target_quaternion_xyzw"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "parameters"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "const": "evidence_stage"
+                },
+                "evidence": {
+                  "type": "string"
+                },
+                "stage": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "evidence",
+                "stage"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "check"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

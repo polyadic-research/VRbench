@@ -1,0 +1,9 @@
+{
+  "name": "Google Gemini",
+  "transport": "chat_completions",
+  "model": "gemini-4-carbon",
+  "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+  "api_key_env": "GEMINI_API_KEY",
+  "reasoning_effort": "medium",
+  "timeout_seconds": 900
+}

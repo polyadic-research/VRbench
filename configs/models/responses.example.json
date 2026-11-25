@@ -1,0 +1,9 @@
+{
+  "name": "provider",
+  "transport": "responses",
+  "model": "provider-model-id",
+  "base_url": "https://provider.example/v1",
+  "api_key_env": "VRBENCH_API_KEY",
+  "reasoning_effort": "medium",
+  "timeout_seconds": 900
+}

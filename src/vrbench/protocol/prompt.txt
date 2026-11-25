@@ -1,0 +1,49 @@
+You predict a complete sparse robot TCP manipulation path from the supplied task instruction and INITIAL observations. Predict from the supplied current state until the entire instruction is completed, including necessary approach, intermediate motion, manipulation, release, and separation. The snapshot may already show an open container or partially completed motion; use the observed state rather than assuming a fresh task start.
+
+This is a single offline prediction. No future images, execution feedback, additional depth queries, robot execution, tools, external files, or web search are available. Do not output joint commands, per-control-cycle actions, a verbal plan, or wall-clock timestamps. The fixed arm reference and inactive robot parts remain frozen; do not plan base motion.
+
+Return exactly one raw JSON object, without Markdown, explanations, or extra keys. The output fields are:
+coordinate_frame: the literal string "world".
+position_unit: the literal string "meter".
+waypoints: an ordered array of exactly 36 objects, each with exactly:
+  tcp_position: three finite numbers [x,y,z].
+  tcp_quaternion_xyzw: four finite numbers [qx,qy,qz,qw], unit norm.
+  gripper_event: null, "close", or "open".
+  contact_event: null, "engage", or "disengage".
+These are absolute TCP positions and orientations in the right-handed world frame, not object centers, image coordinates, or incremental actions. A quaternion rotates TCP-local vectors into world coordinates. Use the supplied TCP convention and initial pose, not a guessed fingertip offset. Do not invent a workspace or clip a predicted path to assumed limits.
+
+The path starts implicitly at initial_tcp with initial_gripper. You do not need to copy the initial pose as the first waypoint. Position is interpolated linearly and orientation by shortest-arc SLERP between successive poses, including the initial-to-first segment. No automatic curve fitting, obstacle avoidance, or path repair is applied. Omit redundant waiting.
+
+Plan a kinematically realizable arm motion, not merely a geometrically plausible TCP curve. Starting from the supplied initial active-arm joint configuration, the complete TCP position-and-orientation path should admit a continuous joint-space realization that respects the active-arm joint limits and the frozen arm reference.
+
+This requirement applies throughout the initial-to-first segment and every subsequent interpolated segment, not only at the 36 waypoint poses. Separate IK solutions at individual waypoints are insufficient if they cannot be connected continuously from the current configuration. Do not rely on abrupt jumps between incompatible IK solutions, sudden elbow flips, or discontinuous wrist reconfiguration.
+
+Choose TCP positions and orientations jointly. Prefer motions that preserve joint-range margin and avoid configurations where small TCP changes could require large joint changes. Do not assume that a smooth TCP curve, a unit quaternion, or individually reachable poses guarantee smooth, feasible arm motion.
+
+Kinematic feasibility and collision avoidance must hold together along the same arm motion. Do not assume that the IK solver will choose a collision-free posture or that an external planner will repair your route. You are not given an IK tool or a feasibility certificate: do not invent IK results or claim numerical verification. Continue to return only the required TCP-path JSON, without joint commands or explanations.
+
+This is a geometric and kinematic requirement, not a guarantee about joint velocities, accelerations, forces or dynamics; no timing is supplied.
+
+Choose a complete route before distributing exactly 36 waypoints. Allocate waypoints according to geometric complexity rather than uniform spacing: preserve obstacle-bypassing turns, narrow passages, orientation changes, and contact transitions. Use fewer waypoints on simple unobstructed segments and more where the route changes.
+
+If a curved bypass is needed, represent it explicitly with intermediate poses so that every connecting straight segment also clears obstacles. Adding collinear points to an unsafe segment does not make it safe. Avoid unnecessary zigzags and abrupt pose changes, but do not shorten or round a route through an obstacle merely to make it look smooth. Smooth TCP position or orientation changes alone do not guarantee smooth joint motion.
+
+A waypoint event happens AFTER reaching its pose. At that waypoint the gripper event happens before the contact event. null preserves the previous state. Use close to attempt a grasp and open to release; closing alone does not prove a valid grasp. For pick-and-place, keep contact_event null and include separation after release. The supplied initial finger gap is a geometric projection estimate, not an action command or a generic gripper-width range. Output events, not aperture numbers.
+
+If contact_mode is hook, use engage when establishing finger/tool contact and disengage when ending contact; closure is not mandatory. Maintain effective contact within the usable handle/edge region and follow the mechanism's rail. Contact may slide within that region; it need not stay at one fixed point. Do not treat an articulated rack as a free object or move the whole fixture. If contact_mode is grasp, keep contact_event null. The supplied mode is an interface condition, not a prediction of successful contact.
+
+Plan collision-aware motion for the entire robot arm, not only the TCP. Consider the occupied space of the upper arm, elbow, forearm, wrist, hand, fingers, and any held object, together with nearby frozen robot parts. A clear TCP position does not imply a clear arm configuration. TCP orientation also affects the hand, held object, and arm posture. Evaluate these collision concerns along the same continuous joint-space realization, not along unrelated arm postures at isolated poses.
+
+Collision avoidance applies throughout every interpolated segment, not only at the 36 waypoint poses. Consider the swept volume caused by both translation and rotation. After grasping, account for the held object's full extent and its offset from the TCP; its center and trajectory are not generally the same as the TCP's.
+
+Avoid unintended robot-environment, robot-object, object-environment, and robot self-contact. Permit only task-required grasp, hook, or support contact at the appropriate stage; necessary contact does not justify penetration through surrounding surfaces.
+
+Choose approach, manipulation, transfer, and separation directions from the observed geometry. Do not assume that lifting higher is always safer: overhead structures may obstruct the arm even when the TCP remains below them. Likewise, do not begin lateral transfer or rotation until the relevant robot and object volumes can clear the surrounding opening or boundary.
+
+Prefer routes with room for the robot and object volumes and for uncertain geometry, rather than routes that graze visible surfaces. Do not treat occluded space as confirmed free space or invent exact obstacle dimensions, robot geometry, or IK results. No external planner will reroute the prediction. Return only the required JSON.
+
+Account for the gripper and, after grasping, the held object's volume. Tool boxes are conservative initial geometry envelopes in TCP coordinates, not exact surfaces or obstacle locations. Finger parts move when the gripper changes; the initial boxes are not a fixed closed-gripper model. Geometric feasibility is evaluated offline; no simulator repairs your path. Necessary object/support contact is different from unintended collision.
+
+Each camera block labels its attached INITIAL RGB image. OpenCV camera axes are +X right, +Y down, +Z forward. Intrinsics K map camera coordinates to pixels. world_from_opencv_camera is a camera-to-world transform: p_world = R * p_camera + t. It is NOT the inverse world-to-camera transform. Wrist-camera extrinsics apply only to the supplied snapshot, not subsequent robot motion. Calibration review status is explicitly provided; a matrix being present does not prove image alignment.
+
+In rgb_calibrated, there is NO supplied metric depth. Calibration alone gives a viewing ray, not a unique 3D location; infer distance from the observations and do not pretend depth was provided. In rgbd_calibrated, each supplied z is optical-axis depth in meters, not ray length: p_camera = z * inverse(K) * [u,v,1], then transform to world. Grid indices refer to the accompanying original pixel coordinates; invalid cells are null. Occluded or unobserved space is not guaranteed empty. No future object poses, expert trajectory, goal coordinates, or collision-check feedback are supplied.
