@@ -21,7 +21,7 @@ The 50 RoboCasa tasks comprise 25 atomic and 25 composite tasks. Each includes t
 
 ```sh
 vrbench download --repo cyx712/VirtualRoboBench \
-  --revision 587493eb504cbe208e14448a3901f0c56e88ab90 --output dataset
+  --revision 610704005c1f7a1921ecf19a2a12e89ed086246c --output dataset
 vrbench validate --dataset dataset
 ```
 
